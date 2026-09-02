@@ -115,6 +115,22 @@ function check(name, got, want) {
   check('generateSeedB58: derive lại từ cùng seed cho cùng DID', identityAgain.did, identity.did);
 }
 
+// ---- 9. buildShareTweetText / buildTweetIntentUrl — chia sẻ lên X ----
+{
+  const did = 'did:key:z6Mkk2EFzw9aUkeDpEfstS5t2p37ejnLrnhrjGtyR1q8sfds';
+  const text = app.buildShareTweetText(did, 'lobby', 1072034);
+  check(
+    'buildShareTweetText: đúng định dạng câu + có seq + có did',
+    text,
+    'Made this for Technocore (@flop_labs) and signed it into the lobby room as #1072034.\n\n' + did
+  );
+
+  const url = app.buildTweetIntentUrl(text);
+  check('buildTweetIntentUrl: bắt đầu đúng domain intent', url.startsWith('https://twitter.com/intent/tweet?text='), true);
+  const decoded = decodeURIComponent(url.split('text=')[1]);
+  check('buildTweetIntentUrl: decode ngược lại đúng text gốc', decoded, text);
+}
+
 console.log('');
 if (failed > 0) {
   console.log(`FAILED: ${failed} check(s)`);

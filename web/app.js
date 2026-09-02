@@ -173,6 +173,21 @@ export function generateSeedB58() {
   return seedB58;
 }
 
+// ---------------------------------------------------------------------------
+// Chia sẻ lên X — CHỈ build text/URL, không tự mở tab (đó là việc của ui.js).
+// seq phải là seq THẬT tra lại được từ server (không tự bịa), xem
+// fetchOwnMessageSeq() trong ui.js — cùng logic với
+// onboard/client.py:find_own_message_seq() ở phía Python.
+// ---------------------------------------------------------------------------
+
+export function buildShareTweetText(did, room, seq) {
+  return `Made this for Technocore (@flop_labs) and signed it into the ${room} room as #${seq}.\n\n${did}`;
+}
+
+export function buildTweetIntentUrl(text) {
+  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+}
+
 export async function identityFromSeedB58(seedB58) {
   const seed = b58decode(seedB58.trim());
   if (seed.length !== 32) {

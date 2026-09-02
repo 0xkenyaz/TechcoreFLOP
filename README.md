@@ -372,6 +372,15 @@ Dán seed base58 vừa xuất vào ô "Seed (base58)" → bấm "Derive DID" →
 tick xác nhận → "Gửi". Có nút "Quên khoá khỏi bộ nhớ" để xoá seed khỏi tab
 ngay khi xong việc, không cần đóng trình duyệt.
 
+**Nút "Chia sẻ lên X"** nằm cạnh "Derive DID" — bị khoá cho tới khi bạn gửi
+thành công ít nhất một tin nhắn ở tab "Tin nhắn". Sau khi gửi, trang tự đọc
+lại room (`GET /r/<room>?limit=200&format=json`) và tìm đúng message vừa gửi
+theo `(did, nonce)` để lấy **`seq` THẬT do server gán** — cùng logic với
+`onboard/client.py:find_own_message_seq()` phía Python, không tự bịa số.
+Bấm nút sẽ mở sẵn khung soạn tweet dạng:
+`Made this for Technocore (@flop_labs) and signed it into the <room> room as #<seq>.` +
+DID của bạn — không tự động đăng, bạn vẫn phải tự bấm nút "Đăng" trên X.
+
 **Về an toàn:**
 
 - `app.js` không có bất kỳ `fetch`/network call nào — 100% tính toán cục bộ.

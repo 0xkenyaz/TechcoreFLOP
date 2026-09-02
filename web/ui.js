@@ -6,6 +6,7 @@ import * as app from './app.js';
 // ---------------------------------------------------------------------------
 
 let identity = null; // { seed: Uint8Array, did: string } | null
+let lastShareInfo = null; // { did, room, seq } | null — reset mỗi khi đổi identity
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -28,6 +29,8 @@ const el = {
   newSeedConfirm: $('#new-seed-confirm'),
   newSeedUseBtn: $('#new-seed-use-btn'),
   newSeedCancelBtn: $('#new-seed-cancel-btn'),
+  shareXBtn: $('#share-x-btn'),
+  shareXHint: $('#share-x-hint'),
 };
 
 function setLocked(locked) {
@@ -39,6 +42,54 @@ function setLocked(locked) {
 function showStatus(node, msg, kind = 'info') {
   node.textContent = msg;
   node.className = `status status-${kind}`;
+}
+
+function resetShareButton() {
+  lastShareInfo = null;
+  el.shareXBtn.disabled = true;
+  el.shareXBtn.onclick = null;
+  el.shareXHint.textContent =
+    'Ký & gửi thành công một tin nhắn ở tab "Tin nhắn" bên dưới để lấy số thứ tự (#seq) thật từ server — nút này mới có nội dung để chia sẻ.';
+}
+
+function enableShareButton() {
+  if (!lastShareInfo) return;
+  const text = app.buildShareTweetText(lastShareInfo.did, lastShareInfo.room, lastShareInfo.seq);
+  const url = app.buildTweetIntentUrl(text);
+  el.shareXBtn.disabled = false;
+  el.shareXBtn.onclick = () => window.open(url, '_blank', 'noopener,noreferrer');
+  el.shareXHint.textContent = `Sẵn sàng chia sẻ — đã ký vào room "${lastShareInfo.room}" với số thứ tự #${lastShareInfo.seq} (tra thật từ server, không tự bịa).`;
+}
+
+// ---------------------------------------------------------------------------
+// Tra lại seq THẬT của message vừa gửi, bằng cách đọc lại room và khớp theo
+// (did, nonce) — cùng logic với onboard/client.py:find_own_message_seq().
+// KHÔNG dựa vào body trả về của chính lượt ghi, vì server không đặc tả rõ
+// dạng "ok, seq=N" cho response đó (xem docstring bên Python để biết lý do).
+// ---------------------------------------------------------------------------
+
+async function fetchOwnMessageSeq(baseUrl, room, did, nonce, limit = 200) {
+  const clampedLimit = Math.max(1, Math.min(200, limit));
+  const url = `${baseUrl.replace(/\/+$/, '')}/r/${encodeURIComponent(room)}?limit=${clampedLimit}&format=json`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Đọc lại room thất bại: HTTP ${resp.status}`);
+  const raw = await resp.text();
+  // Cắt bỏ dòng footer '# budget: ...' có thể nối thêm sau JSON hợp lệ —
+  // giống hệt xử lý bên onboard/client.py.
+  const cleaned = raw.replace(/\n?#\s*budget:.*$/is, '').trim();
+  let data;
+  try {
+    data = JSON.parse(cleaned);
+  } catch {
+    return null;
+  }
+  const messages = Array.isArray(data) ? data : data.messages || [];
+  for (const msg of messages) {
+    if (msg.from === did && String(msg.nonce) === String(nonce)) {
+      return msg.seq != null ? Number(msg.seq) : null;
+    }
+  }
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -56,6 +107,7 @@ async function deriveFromSeed(seedB58) {
     el.identityCard.classList.add('is-unlocked');
     setLocked(false);
     for (const t of el.tabs) t.disabled = false;
+    resetShareButton();
     return true;
   } catch (e) {
     showStatus(el.didOut, `Không derive được: ${e.message}`, 'error');
@@ -74,6 +126,7 @@ el.forgetBtn.addEventListener('click', () => {
   setLocked(true);
   for (const t of el.tabs) t.disabled = true;
   for (const p of $$('.panel')) p.querySelectorAll('.preview').forEach((n) => (n.hidden = true));
+  resetShareButton();
 });
 
 // ---------------------------------------------------------------------------
@@ -205,6 +258,30 @@ function requireIdentity() {
       showStatus(status, 'Đang gửi...', 'info');
       const r = await sendGet(lastUrl);
       showStatus(status, `HTTP ${r.status}: ${r.body.slice(0, 300)}`, r.ok ? 'success' : 'error');
+      if (r.ok && lastSigned) {
+        showStatus(status, 'Đã gửi — đang tra số thứ tự thật (#seq) để bật nút chia sẻ...', 'success');
+        try {
+          const seq = await fetchOwnMessageSeq(
+            el.baseUrl.value.trim(),
+            lastSigned.room,
+            identity.did,
+            lastSigned.nonce
+          );
+          if (seq != null) {
+            lastShareInfo = { did: identity.did, room: lastSigned.room, seq };
+            enableShareButton();
+            showStatus(status, `HTTP ${r.status}: đã gửi, seq=#${seq}. Nút "Chia sẻ lên X" đã sẵn sàng.`, 'success');
+          } else {
+            showStatus(
+              status,
+              `HTTP ${r.status}: đã gửi nhưng chưa tra được #seq (room đang bận) — bấm Ký & xem trước rồi Gửi lại để thử tra lại.`,
+              'info'
+            );
+          }
+        } catch (e) {
+          showStatus(status, `HTTP ${r.status}: đã gửi, nhưng tra #seq lỗi: ${e.message}`, 'info');
+        }
+      }
     } catch (e) {
       showStatus(
         status,
@@ -451,3 +528,4 @@ function requireIdentity() {
 
 setLocked(true);
 for (const t of el.tabs) t.disabled = true;
+resetShareButton();
