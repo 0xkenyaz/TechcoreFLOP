@@ -1,0 +1,2 @@
+cryptography>=42.0
+base58>=2.1

@@ -1,0 +1,36 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+
+# --- Node (chỉ dùng cho test cục bộ trong web/) ---
+node_modules/
+web/package-lock.json
+npm-debug.log*
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# --- QUAN TRỌNG: cấu hình/identity CỤC BỘ của người dùng ---
+# Nếu ai đó chạy CLI ngay trong thư mục repo này thay vì ~/.technocore-viet/
+# (mặc định), các file dưới đây TUYỆT ĐỐI không được commit — chứa
+# private key đã mã hoá, nonce, và log record cá nhân.
+.technocore-viet/
+identity.json
+nonces.json
+records/
+record-sheet.md
+
+# --- Build/tạm ---
+*.zip
+*.tmp

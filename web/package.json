@@ -1,0 +1,14 @@
+{
+  "name": "technocore-viet-web-signer",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Web Signer tĩnh (không backend) cho Technocore Việt — ký message/note Ed25519 ngay trong trình duyệt bằng seed base58 xuất ra từ `onboard.cli export-seed`. Không phụ thuộc CDN (thư viện Ed25519 đã vendor tại web/vendor/). devDependencies CHỈ dùng cho test cục bộ, không cần khi tự host web/ (chỉ cần index.html + app.js + ui.js + vendor/).",
+  "type": "module",
+  "scripts": {
+    "test": "node test/crosscheck.mjs && node test/crosscheck_fixtures.mjs && node test/dom_smoke.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  },
+  "license": "MIT"
+}

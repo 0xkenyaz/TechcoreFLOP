@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Web Signer — Technocore Việt</title>
+<meta name="robots" content="noindex" />
+<style>
+  :root {
+    --ink: #12131a;
+    --ink-2: #191b24;
+    --ink-3: #232631;
+    --line: #33364a;
+    --text: #e9e7de;
+    --text-dim: #a6a6b8;
+    --brass: #c9a24b;
+    --brass-dim: #8f753a;
+    --danger: #c25b4a;
+    --danger-bg: #2a1917;
+    --ok: #6fae7f;
+    --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --serif: Georgia, 'Times New Roman', serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  a { color: var(--brass); }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  header.masthead {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+  }
+
+  .masthead h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 28px;
+    letter-spacing: 0.2px;
+    margin: 0 0 6px;
+  }
+
+  .masthead .seal {
+    color: var(--brass);
+  }
+
+  .masthead p {
+    color: var(--text-dim);
+    margin: 0;
+    font-size: 14px;
+    max-width: 56ch;
+  }
+
+  .banner {
+    background: var(--danger-bg);
+    border: 1px solid #4a2a24;
+    border-left: 3px solid var(--danger);
+    padding: 14px 16px;
+    border-radius: 2px;
+    font-size: 13.5px;
+    color: #e7cfc9;
+    margin-bottom: 28px;
+  }
+
+  .banner strong { color: #f0a68f; }
+
+  section.card {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  section.card > h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 16px;
+    margin: 0 0 14px;
+    color: var(--text);
+  }
+
+  label {
+    display: block;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    margin-top: 12px;
+  }
+  label:first-of-type { margin-top: 0; }
+
+  input[type="text"], input[type="password"], input[type="url"], textarea {
+    width: 100%;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 9px 10px;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+
+  input:focus, textarea:focus, button:focus {
+    outline: 2px solid var(--brass);
+    outline-offset: 1px;
+  }
+
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  button {
+    background: var(--ink-3);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 9px 16px;
+    border-radius: 2px;
+    font-size: 13.5px;
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  button:hover:not(:disabled) { border-color: var(--brass-dim); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  button.primary {
+    background: var(--brass);
+    border-color: var(--brass);
+    color: #1a1408;
+    font-weight: 600;
+  }
+  button.primary:hover:not(:disabled) { background: #d9b25f; }
+  button.primary:disabled { background: var(--ink-3); border-color: var(--line); color: var(--text-dim); }
+
+  button.ghost { background: transparent; }
+
+  #did-out {
+    font-family: var(--mono);
+    font-size: 13px;
+    word-break: break-all;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    padding: 10px;
+    border-radius: 2px;
+    color: var(--text-dim);
+  }
+  #identity-card.is-unlocked #did-out { color: var(--brass); border-color: var(--brass-dim); }
+
+  .tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: var(--text-dim);
+    padding: 10px 14px;
+  }
+  .tab-btn.is-active { color: var(--text); border-bottom-color: var(--brass); }
+
+  #panels { position: relative; }
+  #panels.is-locked { opacity: 0.45; pointer-events: none; }
+  #locked-notice {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 14px 0 0;
+  }
+
+  .panel { display: none; padding-top: 18px; }
+  .panel.is-active { display: block; }
+
+  .field-out {
+    margin-top: 10px;
+  }
+  .field-out .k {
+    font-size: 11.5px;
+    text-transform: none;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .field-out .v {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    word-break: break-all;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    border-radius: 2px;
+    display: block;
+    margin-bottom: 10px;
+    color: #cfcfe0;
+  }
+
+  .preview { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--line); }
+
+  .confirm-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 14px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .confirm-row input { width: auto; margin-top: 3px; }
+
+  .status {
+    margin-top: 12px;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 2px;
+    display: none;
+  }
+  .status:not(:empty) { display: block; }
+  .status-info { background: var(--ink-3); color: var(--text-dim); }
+  .status-error { background: var(--danger-bg); color: #f0a68f; border: 1px solid #4a2a24; }
+  .status-success { background: #16261c; color: var(--ok); border: 1px solid #2c4834; }
+
+  footer {
+    margin-top: 40px;
+    font-size: 12px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <h1><span class="seal">⌗</span> Web Signer — Technocore Việt</h1>
+    <p>
+      Ký message/note bằng Ed25519 NGAY TRONG TRÌNH DUYỆT NÀY. Không server nào
+      của công cụ này nhìn thấy seed — mọi phép tính chạy cục bộ trên máy bạn.
+    </p>
+  </header>
+
+  <div class="banner">
+    <strong>Trước khi dán seed:</strong> chỉ mở trang này từ file cục bộ hoặc
+    một domain bạn tự kiểm soát/tin tưởng, không dùng máy công cộng, và không
+    bao giờ dán seed vào bất kỳ nơi nào khác — kể cả chat với AI. Seed chỉ nằm
+    trong bộ nhớ tab này (không lưu đĩa, không gửi mạng) và biến mất khi đóng
+    tab hoặc bấm "Quên khoá".
+  </div>
+
+  <section class="card" id="identity-card">
+    <h2>1. Identity</h2>
+    <label for="base-url">Base URL server</label>
+    <input type="text" id="base-url" value="https://technocore.chat" />
+
+    <label for="seed-input">Seed (base58) — lấy từ <code>onboard.cli export-seed</code></label>
+    <input type="password" id="seed-input" autocomplete="off" spellcheck="false" placeholder="dán seed base58 vào đây" />
+
+    <div class="row" style="margin-top: 12px;">
+      <button class="primary" id="derive-btn">Derive DID</button>
+      <button class="ghost" id="forget-btn" disabled>Quên khoá khỏi bộ nhớ</button>
+    </div>
+
+    <label style="margin-top: 16px;">DID</label>
+    <div id="did-out">(chưa có identity)</div>
+  </section>
+
+  <section class="card">
+    <h2>2. Ký &amp; gửi</h2>
+    <div class="tabs">
+      <button class="tab-btn is-active" data-tab="say">Tin nhắn</button>
+      <button class="tab-btn" data-tab="pub">DID note</button>
+      <button class="tab-btn" data-tab="rec">Record</button>
+      <button class="tab-btn" data-tab="room">Room (nâng cao)</button>
+    </div>
+    <p id="locked-notice">Derive identity ở trên trước khi dùng các tab này.</p>
+
+    <div id="panels">
+
+      <!-- Tab: say-signed -->
+      <div class="panel is-active" id="panel-say">
+        <label for="say-room">Room</label>
+        <input type="text" id="say-room" value="lobby" />
+        <label for="say-text">Nội dung tin nhắn</label>
+        <textarea id="say-text" placeholder="Nội dung sẽ được sweep single-line trước khi ký"></textarea>
+        <div class="row" style="margin-top: 12px;">
+          <button id="say-preview-btn">Ký &amp; xem trước</button>
+        </div>
+        <div class="preview" id="say-preview" hidden>
+          <div class="field-out"><span class="k">Canonical string (đã ký chính xác chuỗi này)</span><span class="v f-canonical"></span></div>
+          <div class="field-out"><span class="k">Chữ ký (base64url)</span><span class="v f-sig"></span></div>
+          <div class="field-out"><span class="k">URL sẽ gửi</span><span class="v f-url"></span></div>
+          <label class="confirm-row"><input type="checkbox" id="say-confirm" /> Tôi đã kiểm tra nội dung và xác nhận gửi (hành động CÔNG KHAI, gần như vĩnh viễn).</label>
+          <button class="primary" id="say-send-btn" disabled>Gửi</button>
+        </div>
+        <div class="status" id="say-status"></div>
+      </div>
+
+      <!-- Tab: publish DID note -->
+      <div class="panel" id="panel-pub">
+        <label for="pub-nick">Nick hiển thị (tuỳ chọn)</label>
+        <input type="text" id="pub-nick" placeholder="ví dụ: nguyenvana" />
+        <label class="confirm-row" style="margin-top: 12px;"><input type="checkbox" id="pub-force" /> Ghi đè note đã có (bỏ if_absent=1)</label>
+        <div class="row" style="margin-top: 4px;">
+          <button id="pub-preview-btn">Xem trước</button>
+        </div>
+        <div class="preview" id="pub-preview" hidden>
+          <div class="field-out"><span class="k">Đường dẫn note</span><span class="v f-path"></span></div>
+          <div class="field-out"><span class="k">Nội dung</span><span class="v f-value"></span></div>
+          <div class="field-out"><span class="k">URL sẽ gửi</span><span class="v f-url"></span></div>
+          <label class="confirm-row"><input type="checkbox" id="pub-confirm" /> Tôi xác nhận công khai note này.</label>
+          <button class="primary" id="pub-send-btn" disabled>Gửi</button>
+        </div>
+        <div class="status" id="pub-status"></div>
+      </div>
+
+      <!-- Tab: record -->
+      <div class="panel" id="panel-rec">
+        <label for="rec-namespace">Namespace riêng của bạn</label>
+        <input type="text" id="rec-namespace" placeholder="vd. nick bạn đã publish" />
+        <label for="rec-type">Loại đóng góp</label>
+        <input type="text" id="rec-type" value="guide" />
+        <label for="rec-url">Liên kết tới đóng góp</label>
+        <input type="url" id="rec-url" placeholder="https://..." />
+        <label for="rec-desc">Mô tả ngắn</label>
+        <input type="text" id="rec-desc" placeholder="Mô tả ngắn, tiếng Việt" />
+        <label for="rec-room">Room gửi tin nhắn trỏ tới</label>
+        <input type="text" id="rec-room" value="lobby" />
+        <div class="row" style="margin-top: 12px;">
+          <button id="rec-preview-btn">Ký &amp; xem trước</button>
+        </div>
+        <div class="preview" id="rec-preview" hidden>
+          <div class="field-out"><span class="k">Note bền vững — đường dẫn</span><span class="v f-note-path"></span></div>
+          <div class="field-out"><span class="k">Note bền vững — nội dung</span><span class="v f-note-value"></span></div>
+          <div class="field-out"><span class="k">Note bền vững — URL</span><span class="v f-note-url"></span></div>
+          <div class="field-out"><span class="k">Tin nhắn room — nội dung</span><span class="v f-msg-text"></span></div>
+          <div class="field-out"><span class="k">Tin nhắn room — URL</span><span class="v f-room-url"></span></div>
+          <label class="confirm-row"><input type="checkbox" id="rec-confirm" /> Tôi xác nhận ghi record này (hai lượt ghi tuần tự).</label>
+          <button class="primary" id="rec-send-btn" disabled>Gửi</button>
+        </div>
+        <div class="status" id="rec-status"></div>
+      </div>
+
+      <!-- Tab: room (claim/allow) -->
+      <div class="panel" id="panel-room">
+        <h2 style="font-size:14px;">Claim quyền sở hữu room</h2>
+        <label for="room-claim-name">Tên room (không cần tiền tố d-)</label>
+        <input type="text" id="room-claim-name" placeholder="vd. phong-thao-luan" />
+        <div class="row" style="margin-top: 12px;">
+          <button id="room-claim-preview-btn">Đọc nonce &amp; ký</button>
+        </div>
+        <div class="preview" id="room-claim-preview" hidden>
+          <div class="field-out"><span class="k">Nonce sẽ dùng</span><span class="v f-nonce"></span></div>
+          <div class="field-out"><span class="k">URL sẽ gửi</span><span class="v f-url"></span></div>
+          <label class="confirm-row"><input type="checkbox" id="room-claim-confirm" /> Xác nhận claim (chỉ thành công nếu room CHƯA có chủ).</label>
+          <button class="primary" id="room-claim-send-btn" disabled>Gửi</button>
+        </div>
+        <div class="status" id="room-claim-status"></div>
+
+        <h2 style="font-size:14px; margin-top: 26px;">Cập nhật allow-list</h2>
+        <label for="room-allow-name">Tên room (không cần tiền tố d-)</label>
+        <input type="text" id="room-allow-name" placeholder="vd. phong-thao-luan" />
+        <label for="room-allow-dids">Danh sách did:key được phép (cách nhau bằng khoảng trắng — THAY THẾ hoàn toàn danh sách cũ)</label>
+        <textarea id="room-allow-dids" placeholder="did:key:z6Mk... did:key:z6Mk..."></textarea>
+        <div class="row" style="margin-top: 12px;">
+          <button id="room-allow-preview-btn">Đọc nonce &amp; ký</button>
+        </div>
+        <div class="preview" id="room-allow-preview" hidden>
+          <div class="field-out"><span class="k">Nonce sẽ dùng</span><span class="v f-nonce"></span></div>
+          <div class="field-out"><span class="k">Allow-list mới</span><span class="v f-value"></span></div>
+          <div class="field-out"><span class="k">URL sẽ gửi</span><span class="v f-url"></span></div>
+          <label class="confirm-row"><input type="checkbox" id="room-allow-confirm" /> Xác nhận cập nhật (chỉ chủ sở hữu hiện tại mới ghi được).</label>
+          <button class="primary" id="room-allow-send-btn" disabled>Gửi</button>
+        </div>
+        <div class="status" id="room-allow-status"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    Đây là công cụ ký cục bộ, không đại diện cho, không cam kết, và không biết
+    gì về bất kỳ token, airdrop, hay phần thưởng nào liên quan tới
+    technocore.chat. Nếu nút "Gửi" báo lỗi mạng (thường do CORS), copy URL ở
+    trên và mở bằng <code>curl</code> hoặc dán vào thanh địa chỉ trình duyệt.
+    Mã nguồn: xem <code>web/app.js</code> (logic ký, không network) và
+    <code>web/ui.js</code> (giao diện, network calls).
+  </footer>
+
+</div>
+<script type="module" src="./ui.js"></script>
+</body>
+</html>

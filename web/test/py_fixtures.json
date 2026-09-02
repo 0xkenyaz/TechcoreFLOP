@@ -1,0 +1,31 @@
+{
+  "seed_b58": "3wQ1Ap7FQWduPRk4ZPb4RGxHkZzVSesvuaX9YQPbNSto",
+  "did": "did:key:z6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M",
+  "shard": "b0",
+  "key": "b5e219d17519a2",
+  "signed_say": {
+    "did": "did:key:z6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M",
+    "room": "lobby",
+    "nonce": 999888777,
+    "text": "Xin chào   thế giới",
+    "sig": "dLRhkv3-33LtOog5UAFCmdldr39rzjHY-L1ZzYrMSGh6UedftjawJkRuoPSpXT47il7wL5-sMW1XElM5-h2ECA"
+  },
+  "say_url": "http://X/r/lobby/say-signed/did%3Akey%3Az6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M/dLRhkv3-33LtOog5UAFCmdldr39rzjHY-L1ZzYrMSGh6UedftjawJkRuoPSpXT47il7wL5-sMW1XElM5-h2ECA/999888777/Xin%20ch%C3%A0o%20%20%20th%E1%BA%BF%20gi%E1%BB%9Bi",
+  "signed_claim": {
+    "did": "did:key:z6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M",
+    "room": "d-phong-thu-nghiem",
+    "claim_nonce": 42,
+    "sig": "E4Ux9XkgTvhXxxV53aQBz1Jb3Q-u0haNkrXRSP8Ca16S8Dq4RKBE7GRqxee9OfAWCtVTvcwxqeEY4vNt7kTvAg"
+  },
+  "claim_url": "http://X/kv/room-owners/d-phong-thu-nghiem/set-signed/did%3Akey%3Az6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M/E4Ux9XkgTvhXxxV53aQBz1Jb3Q-u0haNkrXRSP8Ca16S8Dq4RKBE7GRqxee9OfAWCtVTvcwxqeEY4vNt7kTvAg/42/did%3Akey%3Az6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M?if_absent=1",
+  "signed_allow": {
+    "did": "did:key:z6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M",
+    "room": "d-phong-thu-nghiem",
+    "nonce": 43,
+    "value": "did:key:z6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M did:key:zAbc123",
+    "sig": "ov5sjmYJ9gp43YDAVFZYLkcRz_WU1Lun3E9F5zzpxRltSC2ZJisytDP14W5Q2_dG33rw4JIQkzgzKkjtQHFmBA"
+  },
+  "allow_url": "http://X/kv/room-allow/d-phong-thu-nghiem/set-signed/did%3Akey%3Az6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M/ov5sjmYJ9gp43YDAVFZYLkcRz_WU1Lun3E9F5zzpxRltSC2ZJisytDP14W5Q2_dG33rw4JIQkzgzKkjtQHFmBA/43/did%3Akey%3Az6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M%20did%3Akey%3AzAbc123",
+  "did_note_url": "http://X/kv/did-b0/b5e219d17519a2/set/did%3Akey%3Az6Mkm7agDj7DWJaoXXpHcBG6Ggp674SgEhwVC3gN1eDaU58M%20nick%3Atester%20lang%3Avi?if_absent=1",
+  "rec_note_url": "http://X/kv/tester-ns/log-1700000000/set/type%3Aguide%20url%3Ahttps%3A%2F%2Fa.b%20desc%3Am%C3%B4%20t%E1%BA%A3?if_absent=1"
+}
