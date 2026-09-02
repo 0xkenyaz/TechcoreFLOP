@@ -20,6 +20,14 @@ const el = {
   lockedNotice: $('#locked-notice'),
   panels: $('#panels'),
   tabs: $$('.tab-btn'),
+  newSeedBtn: $('#new-seed-btn'),
+  newSeedModal: $('#new-seed-modal'),
+  newSeedOut: $('#new-seed-out'),
+  newSeedCopyBtn: $('#new-seed-copy-btn'),
+  newSeedCopyStatus: $('#new-seed-copy-status'),
+  newSeedConfirm: $('#new-seed-confirm'),
+  newSeedUseBtn: $('#new-seed-use-btn'),
+  newSeedCancelBtn: $('#new-seed-cancel-btn'),
 };
 
 function setLocked(locked) {
@@ -37,11 +45,10 @@ function showStatus(node, msg, kind = 'info') {
 // Derive / forget identity
 // ---------------------------------------------------------------------------
 
-el.deriveBtn.addEventListener('click', async () => {
-  const seedB58 = el.seedInput.value.trim();
+async function deriveFromSeed(seedB58) {
   if (!seedB58) {
     showStatus(el.didOut, 'Dán seed (base58) trước đã.', 'error');
-    return;
+    return false;
   }
   try {
     identity = await app.identityFromSeedB58(seedB58);
@@ -49,10 +56,14 @@ el.deriveBtn.addEventListener('click', async () => {
     el.identityCard.classList.add('is-unlocked');
     setLocked(false);
     for (const t of el.tabs) t.disabled = false;
+    return true;
   } catch (e) {
     showStatus(el.didOut, `Không derive được: ${e.message}`, 'error');
+    return false;
   }
-});
+}
+
+el.deriveBtn.addEventListener('click', () => deriveFromSeed(el.seedInput.value.trim()));
 
 el.forgetBtn.addEventListener('click', () => {
   app.forgetIdentity(identity);
@@ -64,6 +75,54 @@ el.forgetBtn.addEventListener('click', () => {
   for (const t of el.tabs) t.disabled = true;
   for (const p of $$('.panel')) p.querySelectorAll('.preview').forEach((n) => (n.hidden = true));
 });
+
+// ---------------------------------------------------------------------------
+// Tạo seed mới — dành cho người chưa từng chạy CLI Python, không cần cài gì.
+// Bắt buộc tick "đã lưu" trước khi nút "Dùng seed này ngay" mở khoá.
+// ---------------------------------------------------------------------------
+
+function closeNewSeedModal() {
+  el.newSeedModal.hidden = true;
+  el.newSeedOut.value = '';
+  el.newSeedConfirm.checked = false;
+  el.newSeedUseBtn.disabled = true;
+  el.newSeedCopyStatus.textContent = '';
+}
+
+el.newSeedBtn.addEventListener('click', () => {
+  const seedB58 = app.generateSeedB58();
+  el.newSeedOut.value = seedB58;
+  el.newSeedConfirm.checked = false;
+  el.newSeedUseBtn.disabled = true;
+  el.newSeedCopyStatus.textContent = '';
+  el.newSeedModal.hidden = false;
+  el.newSeedOut.focus();
+  el.newSeedOut.select();
+});
+
+el.newSeedConfirm.addEventListener('change', () => {
+  el.newSeedUseBtn.disabled = !el.newSeedConfirm.checked;
+});
+
+el.newSeedCopyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(el.newSeedOut.value);
+    el.newSeedCopyStatus.textContent = 'Đã copy vào clipboard.';
+  } catch {
+    el.newSeedOut.select();
+    el.newSeedCopyStatus.textContent = 'Không tự copy được — đã bôi đen sẵn, tự bấm Ctrl/Cmd+C.';
+  }
+});
+
+el.newSeedUseBtn.addEventListener('click', async () => {
+  const seedB58 = el.newSeedOut.value;
+  const ok = await deriveFromSeed(seedB58);
+  el.seedInput.value = seedB58; // để ô Seed phản ánh đúng identity đang dùng
+  closeNewSeedModal();
+  if (!ok) showStatus(el.didOut, 'Tạo seed thành công nhưng derive thất bại — thử lại.', 'error');
+});
+
+el.newSeedCancelBtn.addEventListener('click', closeNewSeedModal);
 
 // ---------------------------------------------------------------------------
 // Tabs

@@ -110,6 +110,30 @@ check('DID reset về placeholder sau Quên khoá', didOut.textContent === '(ch�
 check('Seed input bị xoá sau Quên khoá', seedInput.value === '');
 check('Tab bị khoá lại sau Quên khoá', Array.from(tabs).every((t) => t.disabled));
 
+// --- Test 5: "Tạo seed mới" — luồng cho người chưa từng dùng CLI ---
+const newSeedBtn = window.document.getElementById('new-seed-btn');
+const newSeedModal = window.document.getElementById('new-seed-modal');
+const newSeedOut = window.document.getElementById('new-seed-out');
+const newSeedConfirm = window.document.getElementById('new-seed-confirm');
+const newSeedUseBtn = window.document.getElementById('new-seed-use-btn');
+
+newSeedBtn.dispatchEvent(new window.Event('click'));
+check('Modal tạo seed mới hiện ra', newSeedModal.hidden === false);
+check('Seed mới được điền sẵn vào ô hiển thị', newSeedOut.value.length > 0);
+check('Nút "Dùng seed này ngay" vẫn khoá khi chưa tick xác nhận', newSeedUseBtn.disabled === true);
+
+const generatedSeed = newSeedOut.value;
+newSeedConfirm.checked = true;
+newSeedConfirm.dispatchEvent(new window.Event('change'));
+check('Nút "Dùng seed này ngay" mở khoá sau khi tick xác nhận', newSeedUseBtn.disabled === false);
+
+newSeedUseBtn.dispatchEvent(new window.Event('click'));
+await new Promise((r) => setTimeout(r, 50));
+check('Modal đóng lại sau khi dùng seed', newSeedModal.hidden === true);
+check('Ô Seed chính được điền đúng seed vừa tạo', seedInput.value === generatedSeed);
+check('DID được derive thành công từ seed mới tạo', didOut.textContent.startsWith('did:key:z'));
+check('Tab được mở khoá sau khi dùng seed mới', !Array.from(tabs).some((t) => t.disabled));
+
 console.log('');
 if (failed > 0) {
   console.log(`FAILED: ${failed} check(s)`);

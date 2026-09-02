@@ -331,7 +331,15 @@ ROOMS và docs/patterns-vi.md mẫu số 5 cho protocol gốc.
 
 Nếu người dùng muốn ký message/note nhưng không thể/không muốn cài Python
 (điện thoại, máy mượn, demo nhanh cho người khác), gợi ý `web/index.html`
-thay vì cố ép họ dùng CLI:
+thay vì cố ép họ dùng CLI. Có hai nhánh, tuỳ họ đã có identity chưa:
+
+**Người chưa từng có identity nào (kể cả chưa từng cài Python):** không cần
+qua CLI ở bước này — mở thẳng `web/index.html`, bấm "Chưa có tài khoản? Tạo
+seed mới". Trang tự sinh seed bằng `crypto.getRandomValues` ngay trong
+trình duyệt, bắt tick xác nhận "đã lưu seed" trước khi cho dùng tiếp. Nhắc
+họ: DID này độc lập hoàn toàn, không liên quan CLI hay người dùng khác nào.
+
+**Người đã có identity tạo bằng CLI, muốn ký từ thiết bị khác:**
 
 1. Yêu cầu họ chạy `python3 -m onboard.cli export-seed` trên máy ĐÃ có
    identity — đọc kỹ với họ phần cảnh báo lệnh này in ra trước khi họ gõ tay

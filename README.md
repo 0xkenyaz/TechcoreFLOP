@@ -344,9 +344,19 @@ web/
 
 Dùng khi bạn muốn ký message/note mà **không cài Python** (điện thoại, máy
 mượn có trình duyệt nhưng không có quyền cài gì, hoặc chỉ đơn giản là muốn
-demo cho người khác xem mà không bắt họ setup CLI).
+demo cho người khác xem mà không bắt họ setup CLI). Có hai cách vào:
 
-**Cách dùng:**
+**Cách A — người dùng hoàn toàn mới (chưa từng cài Python/CLI, ví dụ ai đó
+bạn gửi link Vercel cho họ tự dùng):**
+
+Mở `web/index.html` (hoặc trang Vercel đã deploy) → bấm **"Chưa có tài
+khoản? Tạo seed mới"** → trình duyệt tự sinh seed ngẫu nhiên bằng
+`crypto.getRandomValues` (không network, không gửi đi đâu) → trang hiện seed
+lên, bắt tick "Tôi đã lưu seed này ở nơi an toàn" mới cho bấm "Dùng seed này
+ngay" — không có cách bỏ qua bước lưu seed. DID mới hoàn toàn độc lập với
+DID tạo bằng CLI, không liên quan gì đến ai khác.
+
+**Cách B — bạn đã có identity tạo bằng CLI, muốn ký từ thiết bị khác:**
 
 ```bash
 # 1. Trên máy ĐÃ có identity, xuất seed (đọc kỹ cảnh báo hiện ra trước khi gõ tay xác nhận)

@@ -98,6 +98,23 @@ function check(name, got, want) {
   check('signSay signature verifies against derived pubkey', valid, true);
 }
 
+// ---- 8. generateSeedB58() — tạo identity mới hoàn toàn trong trình duyệt ----
+{
+  const a = app.generateSeedB58();
+  const b = app.generateSeedB58();
+  check('generateSeedB58: hai lần gọi cho seed khác nhau', a !== b, true);
+
+  const decodedA = app.b58decode(a);
+  check('generateSeedB58: giải mã base58 ra đúng 32 byte', decodedA.length, 32);
+
+  const identity = await app.identityFromSeedB58(a);
+  check('generateSeedB58: seed sinh ra derive được DID hợp lệ', identity.did.startsWith('did:key:z'), true);
+
+  // re-derive từ đúng seed đó phải cho lại đúng DID (deterministic key derivation)
+  const identityAgain = await app.identityFromSeedB58(a);
+  check('generateSeedB58: derive lại từ cùng seed cho cùng DID', identityAgain.did, identity.did);
+}
+
 console.log('');
 if (failed > 0) {
   console.log(`FAILED: ${failed} check(s)`);

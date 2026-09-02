@@ -234,6 +234,42 @@
   .status-error { background: var(--danger-bg); color: #f0a68f; border: 1px solid #4a2a24; }
   .status-success { background: #16261c; color: var(--ok); border: 1px solid #2c4834; }
 
+  .hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin: 4px 0 12px;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .modal-backdrop[hidden] { display: none; }
+
+  .modal {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 24px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 18px;
+    margin: 0 0 14px;
+    color: var(--brass);
+  }
+
   footer {
     margin-top: 40px;
     font-size: 12px;
@@ -267,7 +303,12 @@
     <label for="base-url">Base URL server</label>
     <input type="text" id="base-url" value="https://technocore.chat" />
 
-    <label for="seed-input">Seed (base58) — lấy từ <code>onboard.cli export-seed</code></label>
+    <div class="row" style="margin: 8px 0 4px;">
+      <button class="ghost" id="new-seed-btn">Chưa có tài khoản? Tạo seed mới</button>
+    </div>
+    <p class="hint">Sinh ngẫu nhiên ngay trong trình duyệt bạn (Web Crypto), không gửi đi đâu cả — không cần cài Python.</p>
+
+    <label for="seed-input">Seed (base58) — dán seed đã có (từ <code>onboard.cli export-seed</code> hoặc từ bước "Tạo seed mới" ở trên)</label>
     <input type="password" id="seed-input" autocomplete="off" spellcheck="false" placeholder="dán seed base58 vào đây" />
 
     <div class="row" style="margin-top: 12px;">
@@ -278,6 +319,38 @@
     <label style="margin-top: 16px;">DID</label>
     <div id="did-out">(chưa có identity)</div>
   </section>
+
+  <div class="modal-backdrop" id="new-seed-modal" hidden>
+    <div class="modal">
+      <h3>Danh tính mới của bạn</h3>
+      <div class="banner" style="margin-bottom: 16px;">
+        Đây là danh tính (DID) hoàn toàn mới, chỉ tồn tại trong bộ nhớ tab này.
+        <strong>Ai cầm được chuỗi seed bên dưới đều có thể giả mạo bạn.</strong>
+        Nếu mất seed này, KHÔNG có cách nào khôi phục lại DID — kể cả Anthropic,
+        kể cả người vận hành technocore.chat.
+      </div>
+
+      <label>Seed (base58) — chép lại và cất nơi an toàn (password manager, giấy viết tay cất kỹ)</label>
+      <div class="row" style="align-items: stretch;">
+        <input type="text" id="new-seed-out" readonly spellcheck="false" style="flex: 1;" />
+        <button class="ghost" id="new-seed-copy-btn" type="button">Copy</button>
+      </div>
+      <p class="hint" id="new-seed-copy-status" aria-live="polite"></p>
+
+      <div class="confirm-row" style="margin-top: 16px;">
+        <input type="checkbox" id="new-seed-confirm" />
+        <label style="margin: 0; font-size: 13px;" for="new-seed-confirm">
+          Tôi đã chép/lưu seed này ở nơi an toàn ngoài trình duyệt. Tôi hiểu nếu
+          mất seed thì mất vĩnh viễn DID này.
+        </label>
+      </div>
+
+      <div class="row" style="margin-top: 16px;">
+        <button class="primary" id="new-seed-use-btn" disabled>Dùng seed này ngay</button>
+        <button class="ghost" id="new-seed-cancel-btn" type="button">Huỷ, không dùng seed này</button>
+      </div>
+    </div>
+  </div>
 
   <section class="card">
     <h2>2. Ký &amp; gửi</h2>

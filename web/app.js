@@ -157,6 +157,22 @@ export async function fingerprintShardPath(did) {
 // người dùng bấm "Xoá key khỏi bộ nhớ" hoặc đóng tab.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Tạo seed MỚI hoàn toàn trong trình duyệt — dùng CSPRNG của Web Crypto
+// (crypto.getRandomValues), KHÔNG phải Math.random(). Tương đương về mặt
+// entropy với việc Python gọi os.urandom(32) trong `onboard.cli init`, chỉ
+// khác nơi chạy. Không network, không lưu đĩa — người gọi (ui.js) chịu
+// trách nhiệm buộc người dùng xác nhận đã lưu seed trước khi dùng tiếp.
+// ---------------------------------------------------------------------------
+
+export function generateSeedB58() {
+  const seed = new Uint8Array(32);
+  crypto.getRandomValues(seed);
+  const seedB58 = b58encode(seed);
+  seed.fill(0); // xoá bản nháp ngay, identityFromSeedB58() sẽ decode lại từ chuỗi b58
+  return seedB58;
+}
+
 export async function identityFromSeedB58(seedB58) {
   const seed = b58decode(seedB58.trim());
   if (seed.length !== 32) {
