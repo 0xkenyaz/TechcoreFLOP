@@ -49,7 +49,7 @@ function resetShareButton() {
   el.shareXBtn.disabled = true;
   el.shareXBtn.onclick = null;
   el.shareXHint.textContent =
-    'Ký & gửi thành công một tin nhắn ở tab "Tin nhắn" bên dưới để lấy số thứ tự (#seq) thật từ server — nút này mới có nội dung để chia sẻ.';
+    'Ký & gửi thành công một tin nhắn vào room "technocore" ở tab "Tin nhắn" (bấm "Đặt = technocore" trước) — tin nhắn gửi vào room khác (như lobby) không tính.';
 }
 
 function enableShareButton() {
@@ -273,8 +273,9 @@ function requireIdentity() {
       showStatus(status, 'Đang gửi...', 'info');
       const r = await sendGet(lastUrl);
       showStatus(status, `HTTP ${r.status}: ${r.body.slice(0, 300)}`, r.ok ? 'success' : 'error');
-      if (r.ok && lastSigned) {
-        showStatus(status, 'Đã gửi — đang tra số thứ tự thật (#seq) để bật nút chia sẻ...', 'success');
+
+      if (r.ok && lastSigned && lastSigned.room === 'technocore') {
+        showStatus(status, 'Đã gửi vào room "technocore" — đang tra #seq để bật nút chia sẻ...', 'success');
         try {
           const seq = await fetchOwnMessageSeq(
             el.baseUrl.value.trim(),
@@ -296,6 +297,17 @@ function requireIdentity() {
         } catch (e) {
           showStatus(status, `HTTP ${r.status}: đã gửi, nhưng tra #seq lỗi: ${e.message}`, 'info');
         }
+      } else if (r.ok && lastSigned) {
+        // Gửi thành công vào room KHÁC "technocore" (vd: lobby) — đây là tin
+        // nhắn riêng, KHÔNG liên quan tới nút "Chia sẻ lên X". Cố tình không
+        // đụng vào lastShareInfo, tránh lẫn seq của room này với room kia.
+        showStatus(
+          status,
+          `HTTP ${r.status}: đã gửi vào room "${lastSigned.room}". Đây không phải room "technocore" nên KHÔNG ` +
+            'ảnh hưởng tới nút "Chia sẻ lên X" — muốn có nội dung chia sẻ, gửi thêm 1 tin nhắn khác vào room ' +
+            '"technocore" (bấm "Đặt = technocore" ở trên).',
+          'success'
+        );
       }
     } catch (e) {
       showStatus(

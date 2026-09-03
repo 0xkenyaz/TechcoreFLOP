@@ -169,6 +169,39 @@ check('Nội dung chia sẻ có đúng DID', shareText.includes('did:key:z6MkvPt
 check('Nội dung chia sẻ nhắc @flop_labs', shareText.includes('@flop_labs'));
 check('Nội dung chia sẻ phản ánh đúng room thật đã ký (technocore)', shareText.includes('the technocore room as #'));
 
+// --- Test 3b: gửi tiếp 1 tin nhắn khác vào room "lobby" — KHÔNG được đụng
+// vào trạng thái "Chia sẻ lên X" đang có (vẫn phải giữ đúng seq của
+// technocore, không bị ghi đè bởi seq của lobby) ---
+window.document.getElementById('say-room').value = 'lobby';
+window.document.getElementById('say-text').value = 'Chào lobby, tin nhắn riêng biệt';
+window.document.getElementById('say-preview-btn').dispatchEvent(new window.Event('click'));
+await new Promise((r) => setTimeout(r, 50));
+confirmBox.checked = true;
+confirmBox.dispatchEvent(new window.Event('change'));
+
+const canonicalText2 = sayPreview.querySelector('.f-canonical').textContent;
+const nonceFromCanonical2 = canonicalText2.split('|')[1];
+window.__mockShareState = {
+  did: 'did:key:z6MkvPtGBr5fxPyQ7YY4EEhmxmLvEVStGc8EsaMLgU28GEUY',
+  nonce: nonceFromCanonical2,
+  room: 'lobby',
+};
+
+sendBtn.dispatchEvent(new window.Event('click'));
+await new Promise((r) => setTimeout(r, 50));
+check(
+  'Gửi vào room khác "technocore" (lobby) KHÔNG làm mất nội dung chia sẻ đã có',
+  shareXBtn.disabled === false
+);
+
+shareXBtn.dispatchEvent(new window.Event('click'));
+const openedUrl2 = window.__openCalls[window.__openCalls.length - 1]?.url || '';
+const shareText2 = decodeURIComponent(openedUrl2.split('text=')[1] || '');
+check(
+  'Nút "Chia sẻ lên X" vẫn dùng đúng seq của lần gửi vào technocore, không bị ghi đè bởi lobby',
+  shareText2.includes('#1072034') && shareText2.includes('the technocore room as #')
+);
+
 // --- Test 4: forget xoá sạch state ---
 window.document.getElementById('forget-btn').dispatchEvent(new window.Event('click'));
 await new Promise((r) => setTimeout(r, 20));

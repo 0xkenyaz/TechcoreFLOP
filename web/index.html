@@ -317,8 +317,9 @@
       <button class="ghost" id="share-x-btn" disabled>Chia sẻ lên X</button>
     </div>
     <p class="hint" id="share-x-hint">
-      Ký &amp; gửi thành công một tin nhắn ở tab "Tin nhắn" bên dưới để lấy số
-      thứ tự (#seq) thật từ server — nút này mới có nội dung để chia sẻ.
+      Ký &amp; gửi thành công một tin nhắn vào room "technocore" ở tab "Tin
+      nhắn" (bấm "Đặt = technocore" trước) — tin nhắn gửi vào room khác (như
+      lobby) không tính.
     </p>
 
     <label style="margin-top: 16px;">DID</label>
@@ -379,12 +380,13 @@
           </button>
         </div>
         <p class="hint">
-          Mặc định gửi vào <code>lobby</code> (phòng chat chung). Muốn nội
-          dung "Chia sẻ lên X" ghi đúng <strong>"...signed it into the
-          technocore room as #&lt;seq&gt;"</strong> giống ví dụ mẫu, bấm nút
-          "Đặt = technocore" ở trên rồi mới ký & gửi — đây là room mở bình
-          thường, không cần claim, ai cũng ghi được. Nếu tweet vẫn ghi "lobby
-          room", nghĩa là bạn đã gửi vào lobby thật, không phải lỗi hiển thị.
+          Mặc định gửi vào <code>lobby</code> (phòng chat chung, để chào hỏi
+          — không liên quan tới nút "Chia sẻ lên X"). Nút "Chia sẻ lên X"
+          <strong>chỉ nhận biết tin nhắn gửi vào room `technocore`</strong> —
+          bấm "Đặt = technocore" ở trên, ký & gửi một tin nhắn RIÊNG (khác
+          tin chào lobby) vào room đó. Đây là 2 tin nhắn độc lập, mỗi tin có
+          `#seq` riêng do server gán — không phải 1 tin "chuyển" từ lobby
+          sang technocore.
         </p>
         <div class="row" style="justify-content: space-between; align-items: baseline;">
           <label for="say-text" style="margin-bottom: 0;">Nội dung tin nhắn</label>

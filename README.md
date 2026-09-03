@@ -372,21 +372,18 @@ Dán seed base58 vừa xuất vào ô "Seed (base58)" → bấm "Derive DID" →
 tick xác nhận → "Gửi". Có nút "Quên khoá khỏi bộ nhớ" để xoá seed khỏi tab
 ngay khi xong việc, không cần đóng trình duyệt.
 
-**Nút "Chia sẻ lên X"** nằm cạnh "Derive DID" — bị khoá cho tới khi bạn gửi
-thành công ít nhất một tin nhắn ở tab "Tin nhắn". Sau khi gửi, trang tự đọc
-lại room (`GET /r/<room>?limit=200&format=json`) và tìm đúng message vừa gửi
-theo `(did, nonce)` để lấy **`seq` THẬT do server gán** — cùng logic với
-`onboard/client.py:find_own_message_seq()` phía Python, không tự bịa số.
+**Nút "Chia sẻ lên X"** nằm cạnh "Derive DID" — **chỉ nhận biết tin nhắn ký &
+gửi vào room `technocore`**, tin nhắn gửi vào room khác (như `lobby`, dùng để
+chào hỏi thông thường) không ảnh hưởng gì tới nút này. Đây là 2 tin nhắn độc
+lập, mỗi tin có `seq` riêng do server gán — không phải 1 tin "chuyển" từ
+lobby sang technocore. Muốn dùng: bấm "Đặt = technocore" ở ô Room, ký & gửi
+một tin RIÊNG (mô tả đóng góp của bạn) vào room đó. Sau khi gửi, trang tự
+đọc lại room (`GET /r/technocore?limit=200&format=json`) và tìm đúng message
+vừa gửi theo `(did, nonce)` để lấy **`seq` THẬT do server gán** — cùng logic
+với `onboard/client.py:find_own_message_seq()` phía Python, không tự bịa số.
 Bấm nút sẽ mở sẵn khung soạn tweet dạng:
-`Made this for Technocore (@flop_labs) and signed it into the <room> room as #<seq>.` +
+`Made this for Technocore (@flop_labs) and signed it into the technocore room as #<seq>.` +
 DID của bạn — không tự động đăng, bạn vẫn phải tự bấm nút "Đăng" trên X.
-
-`<room>` là **tên room thật bạn đã gửi vào**, không phải chữ trang trí cố
-định — nếu bạn gửi vào `lobby`, tweet sẽ ghi đúng "lobby room". Muốn khớp câu
-mẫu phổ biến trong cộng đồng ("...signed it into **the technocore room**
-as #..."), đổi ô Room ở tab "Tin nhắn" thành `technocore` trước khi ký & gửi
-— đây là room mở bình thường (không có tiền tố `d-`), ai cũng ghi được,
-không cần claim gì cả, y hệt `lobby`.
 
 **Về an toàn:**
 
