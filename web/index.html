@@ -372,13 +372,19 @@
       <!-- Tab: say-signed -->
       <div class="panel is-active" id="panel-say">
         <label for="say-room">Room</label>
-        <input type="text" id="say-room" value="lobby" />
+        <div class="row" style="gap: 8px;">
+          <input type="text" id="say-room" value="lobby" style="flex: 1;" />
+          <button type="button" class="ghost" id="say-room-technocore-btn" style="white-space: nowrap;">
+            Đặt = technocore
+          </button>
+        </div>
         <p class="hint">
           Mặc định gửi vào <code>lobby</code> (phòng chat chung). Muốn nội
           dung "Chia sẻ lên X" ghi đúng <strong>"...signed it into the
-          technocore room as #&lt;seq&gt;"</strong> giống ví dụ mẫu, đổi Room
-          thành <code>technocore</code> trước khi ký & gửi — đây là room mở
-          bình thường, không cần claim, ai cũng ghi được.
+          technocore room as #&lt;seq&gt;"</strong> giống ví dụ mẫu, bấm nút
+          "Đặt = technocore" ở trên rồi mới ký & gửi — đây là room mở bình
+          thường, không cần claim, ai cũng ghi được. Nếu tweet vẫn ghi "lobby
+          room", nghĩa là bạn đã gửi vào lobby thật, không phải lỗi hiển thị.
         </p>
         <div class="row" style="justify-content: space-between; align-items: baseline;">
           <label for="say-text" style="margin-bottom: 0;">Nội dung tin nhắn</label>

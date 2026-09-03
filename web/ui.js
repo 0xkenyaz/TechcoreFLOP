@@ -220,6 +220,7 @@ function requireIdentity() {
 
 {
   const room = $('#say-room');
+  const roomTechnocoreBtn = $('#say-room-technocore-btn');
   const text = $('#say-text');
   const randomBtn = $('#say-random-btn');
   const previewBtn = $('#say-preview-btn');
@@ -236,6 +237,11 @@ function requireIdentity() {
   randomBtn.addEventListener('click', () => {
     text.value = app.randomSayText();
     text.focus();
+  });
+
+  roomTechnocoreBtn.addEventListener('click', () => {
+    room.value = 'technocore';
+    room.focus();
   });
 
   previewBtn.addEventListener('click', async () => {
