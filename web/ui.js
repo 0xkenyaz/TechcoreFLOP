@@ -221,6 +221,7 @@ function requireIdentity() {
 {
   const room = $('#say-room');
   const text = $('#say-text');
+  const randomBtn = $('#say-random-btn');
   const previewBtn = $('#say-preview-btn');
   const sendBtn = $('#say-send-btn');
   const confirmBox = $('#say-confirm');
@@ -228,6 +229,14 @@ function requireIdentity() {
   const status = $('#say-status');
   let lastSigned = null;
   let lastUrl = null;
+
+  // Điền sẵn 1 gợi ý ngay khi trang tải — người dùng xoá/sửa tự do.
+  text.value = app.randomSayText();
+
+  randomBtn.addEventListener('click', () => {
+    text.value = app.randomSayText();
+    text.focus();
+  });
 
   previewBtn.addEventListener('click', async () => {
     try {

@@ -109,8 +109,16 @@ check('Tab được mở khoá sau khi derive', !Array.from(tabs).some((t) => t.
 check('#panels không còn is-locked', !window.document.getElementById('panels').classList.contains('is-locked'));
 
 // --- Test 3: tab "Tin nhắn" — ký & xem trước ---
-window.document.getElementById('say-room').value = 'lobby';
-window.document.getElementById('say-text').value = 'Xin chào từ smoke test';
+const sayTextEl = window.document.getElementById('say-text');
+check('Ô "Nội dung tin nhắn" được điền sẵn gợi ý khi trang tải', sayTextEl.value.length > 0);
+
+const prefilled = sayTextEl.value;
+window.document.getElementById('say-random-btn').dispatchEvent(new window.Event('click'));
+check('Nút "🎲 Gợi ý khác" đổi được nội dung (hoặc trùng ngẫu nhiên, không bắt buộc khác)', sayTextEl.value.length > 0);
+void prefilled; // (chấp nhận trùng do random — chỉ cần không rỗng và không lỗi)
+
+window.document.getElementById('say-room').value = 'technocore';
+window.document.getElementById('say-text').value = 'Xin chào từ smoke test'; // ghi đè gợi ý — người dùng tự sửa được, đúng như thiết kế
 window.document.getElementById('say-preview-btn').dispatchEvent(new window.Event('click'));
 await new Promise((r) => setTimeout(r, 50));
 
@@ -133,7 +141,7 @@ const nonceFromCanonical = canonicalText.split('|')[1];
 window.__mockShareState = {
   did: 'did:key:z6MkvPtGBr5fxPyQ7YY4EEhmxmLvEVStGc8EsaMLgU28GEUY',
   nonce: nonceFromCanonical,
-  room: 'lobby',
+  room: 'technocore',
 };
 
 const shareXBtn = window.document.getElementById('share-x-btn');
@@ -159,6 +167,7 @@ const shareText = decodeURIComponent(openedUrl.split('text=')[1] || '');
 check('Nội dung chia sẻ có đúng #seq tra được', shareText.includes('#1072034'));
 check('Nội dung chia sẻ có đúng DID', shareText.includes('did:key:z6MkvPtGBr5fxPyQ7YY4EEhmxmLvEVStGc8EsaMLgU28GEUY'));
 check('Nội dung chia sẻ nhắc @flop_labs', shareText.includes('@flop_labs'));
+check('Nội dung chia sẻ phản ánh đúng room thật đã ký (technocore)', shareText.includes('the technocore room as #'));
 
 // --- Test 4: forget xoá sạch state ---
 window.document.getElementById('forget-btn').dispatchEvent(new window.Event('click'));

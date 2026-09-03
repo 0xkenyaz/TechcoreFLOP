@@ -381,6 +381,13 @@ Bấm nút sẽ mở sẵn khung soạn tweet dạng:
 `Made this for Technocore (@flop_labs) and signed it into the <room> room as #<seq>.` +
 DID của bạn — không tự động đăng, bạn vẫn phải tự bấm nút "Đăng" trên X.
 
+`<room>` là **tên room thật bạn đã gửi vào**, không phải chữ trang trí cố
+định — nếu bạn gửi vào `lobby`, tweet sẽ ghi đúng "lobby room". Muốn khớp câu
+mẫu phổ biến trong cộng đồng ("...signed it into **the technocore room**
+as #..."), đổi ô Room ở tab "Tin nhắn" thành `technocore` trước khi ký & gửi
+— đây là room mở bình thường (không có tiền tố `d-`), ai cũng ghi được,
+không cần claim gì cả, y hệt `lobby`.
+
 **Về an toàn:**
 
 - `app.js` không có bất kỳ `fetch`/network call nào — 100% tính toán cục bộ.

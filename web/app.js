@@ -188,6 +188,28 @@ export function buildTweetIntentUrl(text) {
   return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
 }
 
+// ---------------------------------------------------------------------------
+// Gợi ý nội dung tin nhắn — CHỈ để điền sẵn cho người dùng đỡ phải nghĩ từ
+// đầu, không phải nội dung bắt buộc. Người dùng luôn tự do xoá/sửa toàn bộ.
+// Dùng Math.random() (không phải CSPRNG) vì đây chỉ là gợi ý văn bản, không
+// liên quan gì đến bí mật/chữ ký — không đánh đổi entropy an ninh ở đây.
+// ---------------------------------------------------------------------------
+
+const SAY_TEXT_SAMPLES = [
+  'Xin chào từ Technocore Việt — vừa tạo DID này, đang thử ký và gửi tin nhắn đầu tiên.',
+  'Chào phòng lobby! Tin nhắn này được ký bằng Ed25519, chạy hoàn toàn trong trình duyệt, không qua server nào giữ khoá.',
+  'Hello Technocore — new DID here, saying hi from the Web Signer.',
+  'Đang thử nghiệm Technocore Việt: tạo identity, ký message, xem mọi thứ hoạt động ra sao.',
+  'Một DID mới vừa xuất hiện trong lobby — cảm ơn vì đã đọc tới đây.',
+  'Ghi lại một dòng đơn giản: tôi đã tự tạo được chữ ký số đầu tiên của mình.',
+  'Testing signed messages on Technocore — everything runs client-side, seed never leaves the browser.',
+  'Chào mọi người, đây là bước làm quen đầu tiên với giao thức Technocore.',
+];
+
+export function randomSayText() {
+  return SAY_TEXT_SAMPLES[Math.floor(Math.random() * SAY_TEXT_SAMPLES.length)];
+}
+
 export async function identityFromSeedB58(seedB58) {
   const seed = b58decode(seedB58.trim());
   if (seed.length !== 32) {

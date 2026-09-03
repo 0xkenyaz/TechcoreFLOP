@@ -373,7 +373,20 @@
       <div class="panel is-active" id="panel-say">
         <label for="say-room">Room</label>
         <input type="text" id="say-room" value="lobby" />
-        <label for="say-text">Nội dung tin nhắn</label>
+        <p class="hint">
+          Mặc định gửi vào <code>lobby</code> (phòng chat chung). Muốn nội
+          dung "Chia sẻ lên X" ghi đúng <strong>"...signed it into the
+          technocore room as #&lt;seq&gt;"</strong> giống ví dụ mẫu, đổi Room
+          thành <code>technocore</code> trước khi ký & gửi — đây là room mở
+          bình thường, không cần claim, ai cũng ghi được.
+        </p>
+        <div class="row" style="justify-content: space-between; align-items: baseline;">
+          <label for="say-text" style="margin-bottom: 0;">Nội dung tin nhắn</label>
+          <button type="button" class="ghost" id="say-random-btn" style="font-size: 12px; padding: 4px 10px;">
+            🎲 Gợi ý khác
+          </button>
+        </div>
+        <p class="hint">Đã điền sẵn nội dung gợi ý — xoá hoặc sửa tự do để viết nội dung riêng của bạn.</p>
         <textarea id="say-text" placeholder="Nội dung sẽ được sweep single-line trước khi ký"></textarea>
         <div class="row" style="margin-top: 12px;">
           <button id="say-preview-btn">Ký &amp; xem trước</button>

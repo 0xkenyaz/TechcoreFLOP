@@ -118,17 +118,32 @@ function check(name, got, want) {
 // ---- 9. buildShareTweetText / buildTweetIntentUrl — chia sẻ lên X ----
 {
   const did = 'did:key:z6Mkk2EFzw9aUkeDpEfstS5t2p37ejnLrnhrjGtyR1q8sfds';
-  const text = app.buildShareTweetText(did, 'lobby', 1072034);
+  const text = app.buildShareTweetText(did, 'technocore', 1072034);
   check(
-    'buildShareTweetText: đúng định dạng câu + có seq + có did',
+    'buildShareTweetText: đúng định dạng câu + có seq + có did + đúng room thật',
     text,
-    'Made this for Technocore (@flop_labs) and signed it into the lobby room as #1072034.\n\n' + did
+    'Made this for Technocore (@flop_labs) and signed it into the technocore room as #1072034.\n\n' + did
+  );
+  const textLobby = app.buildShareTweetText(did, 'lobby', 42);
+  check(
+    'buildShareTweetText: room khác (lobby) phải phản ánh đúng, không hardcode "technocore"',
+    textLobby,
+    'Made this for Technocore (@flop_labs) and signed it into the lobby room as #42.\n\n' + did
   );
 
   const url = app.buildTweetIntentUrl(text);
   check('buildTweetIntentUrl: bắt đầu đúng domain intent', url.startsWith('https://twitter.com/intent/tweet?text='), true);
   const decoded = decodeURIComponent(url.split('text=')[1]);
   check('buildTweetIntentUrl: decode ngược lại đúng text gốc', decoded, text);
+}
+
+// ---- 10. randomSayText() — gợi ý nội dung tin nhắn ----
+{
+  const a = app.randomSayText();
+  check('randomSayText: trả về chuỗi không rỗng', typeof a === 'string' && a.length > 0, true);
+  const samples = new Set();
+  for (let i = 0; i < 200; i++) samples.add(app.randomSayText());
+  check('randomSayText: có nhiều hơn 1 gợi ý khác nhau (không cố định 1 câu)', samples.size > 1, true);
 }
 
 console.log('');
